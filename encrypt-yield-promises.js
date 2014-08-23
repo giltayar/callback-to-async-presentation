@@ -17,6 +17,8 @@ function* main() {
     yield ctop(fs.close)(fdRead);
 }
 
+async(main());
+
 function encrypt(readBuffer, bytesRead) {
     var writeBuffer = new Buffer(bytesRead);
 
@@ -56,5 +58,3 @@ function async(promiseIterator) {
         })
     }
 }
-
-async(main());

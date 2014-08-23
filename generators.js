@@ -4,11 +4,24 @@ function* firstThreeNumbers() {
     yield 3
 }
 
+function firstThreeNumbers() {
+    return {
+        i: 0,
+        next() {
+            ++this.i
+            if (this.i <= 3)
+                return {done: false, value: this.i}
+            else
+                return {done: true}
+        }
+    }
+}
+
 var iterator = firstThreeNumbers();
-iterator.next(); //{done: false, value: 1}
-iterator.next(); //{done: false, value: 2}
-iterator.next(); //{done: false, value: 3}
-iterator.next(); //{done: true, value: undefined}
+console.log(iterator.next()); //{done: false, value: 1}
+console.log(iterator.next()); //{done: false, value: 2}
+console.log(iterator.next()); //{done: false, value: 3}
+console.log(iterator.next()); //{done: true, value: undefined}
 
 for (var i of firstThreeNumbers())
     console.log(i);

@@ -17,7 +17,17 @@ promiseIterator.next().value.then(function() {
 function *bidirectional() {
     var content = yield ctop(fs.readFile)("a-file.txt");
 
+    yield ctop(fs.writeFile)("another-file.txt", content);
 }
+
+var bidirectionalIterator = bidirectional();
+
+bidirectionalIterator.next().value.then(function(readContent) {
+    return bidirectionalIterator.next(readContent).value;
+}).then(function() {
+    process.exit(0);
+})
+
 
 function ctop(func) {
     return function(...args) {

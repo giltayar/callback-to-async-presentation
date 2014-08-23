@@ -1,27 +1,21 @@
-var $__2 = $traceurRuntime.initGeneratorFunction(firstThreeNumbers),
+var $__2 = $traceurRuntime.initGeneratorFunction(promisesPromisesPromises),
     $__3 = $traceurRuntime.initGeneratorFunction(bidirectional);
-function firstThreeNumbers() {
+var fs = require('fs');
+function promisesPromisesPromises() {
   return $traceurRuntime.createGeneratorInstance(function($ctx) {
     while (true)
       switch ($ctx.state) {
         case 0:
           $ctx.state = 2;
-          return 1;
+          return ctop(fs.writeFile)("a-file.txt", "some text");
         case 2:
           $ctx.maybeThrow();
           $ctx.state = 4;
           break;
         case 4:
           $ctx.state = 6;
-          return 2;
+          return ctop(fs.writeFile)("another-file.txt", "some other text");
         case 6:
-          $ctx.maybeThrow();
-          $ctx.state = 8;
-          break;
-        case 8:
-          $ctx.state = 10;
-          return 3;
-        case 10:
           $ctx.maybeThrow();
           $ctx.state = -2;
           break;
@@ -30,40 +24,22 @@ function firstThreeNumbers() {
       }
   }, $__2, this);
 }
-var iterator = firstThreeNumbers();
-iterator.next();
-iterator.next();
-iterator.next();
-iterator.next();
-for (var $__0 = firstThreeNumbers()[$traceurRuntime.toProperty(Symbol.iterator)](),
-    $__1; !($__1 = $__0.next()).done; ) {
-  var i = $__1.value;
-  console.log(i);
-}
 function bidirectional() {
-  var n,
-      b;
+  var content;
   return $traceurRuntime.createGeneratorInstance(function($ctx) {
     while (true)
       switch ($ctx.state) {
         case 0:
           $ctx.state = 2;
-          return 1;
+          return ctop(fs.readFile)("a-file.txt");
         case 2:
-          n = $ctx.sent;
+          content = $ctx.sent;
           $ctx.state = 4;
           break;
         case 4:
           $ctx.state = 6;
-          return n * 2;
+          return ctop(fs.writeFile)("another-file.txt", content);
         case 6:
-          b = $ctx.sent;
-          $ctx.state = 8;
-          break;
-        case 8:
-          $ctx.state = 10;
-          return b * 2;
-        case 10:
           $ctx.maybeThrow();
           $ctx.state = -2;
           break;
@@ -72,8 +48,30 @@ function bidirectional() {
       }
   }, $__3, this);
 }
-var iterator = bidirectional();
-iterator.next();
-iterator.next(3);
-iterator.next(5);
-iterator.next();
+var bidirectionalIterator = bidirectional();
+bidirectionalIterator.next().value.then(function(readContent) {
+  console.log("@@@GIL read=", readContent.toString());
+  return bidirectionalIterator.next(readContent).value;
+}).then(function() {
+  process.exit(0);
+});
+function ctop(func) {
+  return function() {
+    for (var args = [],
+        $__0 = 0; $__0 < arguments.length; $__0++)
+      $traceurRuntime.setProperty(args, $__0, arguments[$traceurRuntime.toProperty($__0)]);
+    return new Promise(function(fulfill, reject) {
+      args.push(function(err) {
+        for (var resultArgs = [],
+            $__1 = 1; $__1 < arguments.length; $__1++)
+          $traceurRuntime.setProperty(resultArgs, $__1 - 1, arguments[$traceurRuntime.toProperty($__1)]);
+        if (err)
+          reject(err);
+        else {
+          fulfill.apply(null, $traceurRuntime.spread(resultArgs));
+        }
+      });
+      func.apply(null, $traceurRuntime.spread(args));
+    });
+  };
+}

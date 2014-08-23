@@ -17,6 +17,8 @@ function main() {
     fs.closeSync(fdRead);
 }
 
+main();
+
 function encrypt(readBuffer, bytesRead) {
     var writeBuffer = new Buffer(bytesRead);
 
@@ -24,5 +26,3 @@ function encrypt(readBuffer, bytesRead) {
 
     return writeBuffer;
 }
-
-main();

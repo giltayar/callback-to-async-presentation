@@ -18,6 +18,8 @@ async function main() {
     await ctop(fs.close)(fdRead);
 }
 
+main();
+
 function encrypt(readBuffer, bytesRead) {
     var writeBuffer = new Buffer(bytesRead);
 
@@ -39,5 +41,3 @@ function ctop(func) {
         })
     }
 }
-
-main();
