@@ -1,9 +1,11 @@
 var fs = require('fs');
 
 function* promisesPromisesPromises() {
-    yield ctop(fs.writeFile)("a-file.txt", "some text");
+  yield ctop(fs.writeFile)("a-file.txt", 
+                           "some text");
 
-    yield ctop(fs.writeFile)("another-file.txt", "some other text"); 
+  yield ctop(fs.writeFile)("another-file.txt", 
+                           "some other text"); 
 }
 
 var promiseIterator = promisesPromisesPromises();
@@ -15,17 +17,21 @@ promiseIterator.next().value.then(function() {
 })
 
 function *bidirectional() {
-    var content = yield ctop(fs.readFile)("a-file.txt");
+  var content = yield ctop(fs.readFile)("a-file.txt");
 
-    yield ctop(fs.writeFile)("another-file.txt", content);
+  yield ctop(fs.writeFile)("another-file.txt", content);
 }
+
+
 
 var bidirectionalIterator = bidirectional();
 
-bidirectionalIterator.next().value.then(function(readContent) {
-    return bidirectionalIterator.next(readContent).value;
+
+
+bidirectionalIterator.next().value.then(function(content) {
+  return bidirectionalIterator.next(content).value;
 }).then(function() {
-    process.exit(0);
+  process.exit(0);
 })
 
 
